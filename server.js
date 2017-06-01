@@ -6,6 +6,9 @@ const { DATABASE, PORT } = require('./config');
 const app = express();
 
 // Add middleware and .get, .post, .put and .delete endpoints
+app.get('/', (req, res) => {
+  res.send('Hello World!');  
+});
 
 let server;
 let knex;
