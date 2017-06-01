@@ -8,7 +8,7 @@ const app = express();
 
 // Add middleware and .get, .post, .put and .delete endpoints
 app.get('/', (req, res) => {
-  res.send('Hello World!');  
+  res.send('Hello World!');
 });
 
 // Set CORS headers to enable cross-domain requests
@@ -22,16 +22,35 @@ app.use(bodyParser.json());
 
 /** CORE ENDPOINTS **/
 app.get('/api/items', (req, res) => {
-  res.json([]);
+  knex.select(['id'])
+    .from('items')
+    .then(results => {
+      res.json(results);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('Internal server error');
+    });
 });
 
 app.post('/api/items', (req, res) => {
-  // Solution A: Use .location()
   res.status(201).location('PLACEHOLDER').json({ title: req.body.title });
+});
 
-  // Solution B: use .setHeader()
-  // res.setHeader('location', 'PLACEHOLDER');
-  // res.status(201).json({ title: req.body.title });
+app.get('/api/items/:id', (req, res) => {
+  const { id } = req.params;
+  knex
+    .select(['id'])
+    .from('items')
+    .where('id', id)
+    .then((results) => {
+      const item = results[0];      
+      res.json(item);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('Internal server error');
+    });
 });
 
 let server;
